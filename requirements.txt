@@ -1,0 +1,26 @@
+# Web Framework & API Server
+flask
+flask-cors
+python-dotenv
+
+# Database
+sqlalchemy
+mysql-connector-python
+
+# Data Analysis & Machine Learning
+numpy
+pandas
+scikit-learn
+
+# AI & Image Processing
+rembg
+pillow
+onnxruntime
+
+# Web Crawling & Data Collection
+requests
+selenium
+webdriver-manager
+
+# Dashboard UI
+streamlit

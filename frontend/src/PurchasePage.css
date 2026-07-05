@@ -1,0 +1,179 @@
+/* 전체 레이아웃 구성 */
+.advanced-collage-layout.dark-theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    gap: 40px; /* 로고가 빠진 자리에 좌우 간격 추가 */
+}
+
+/* 왼쪽 캔버스 영역 */
+.left-canvas-area {
+    flex: 1.2; /* 캔버스 영역을 조금 더 넓게 설정 */
+    padding: 40px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+}
+
+.outfit-badge {
+    background: #333;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: #fff;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.collage-canvas {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #333;
+    width: 100%;
+    flex: 1;
+}
+
+.canvas-item {
+    position: absolute;
+}
+
+.canvas-item img {
+    width: 150px;
+    user-select: none;
+}
+
+/* [삭제] .center-divider-area, .stacked-mbti-logo 관련 스타일 모두 삭제 */
+
+/* 오른쪽 사이드바 영역 */
+.purchase-sidebar {
+    flex: 0.8; /* 리스트 영역 비율 조정 */
+    height: 700px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    border-left: 1px solid #222; /* 로고 대신 좌측에 경계선 추가 (선택 사항) */
+}
+
+.top-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebar-title {
+    text-align: left; /* 중앙 정렬에서 왼쪽 정렬로 변경하여 가독성 향상 */
+    margin-bottom: 30px;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* 상품 리스트 영역 스크롤 */
+.purchase-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-bottom: 20px;
+}
+
+.purchase-list::-webkit-scrollbar {
+    width: 4px;
+}
+.purchase-list::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 2px;
+}
+
+/* 상품 카드 스타일 */
+.purchase-item-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 15px;
+}
+
+.item-img-container {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.item-img-container img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+}
+
+.item-text-info {
+    color: #fff;
+}
+
+.item-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.item-price {
+    font-size: 1rem;
+    color: #fff;
+    margin: 5px 0 0 0;
+    font-weight: 700;
+    text-align: left;
+}
+
+/* 하단 버튼 그룹 */
+.purchase-actions {
+    padding-top: 20px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #1a1a1a;
+}
+
+.coupon-btn, .pay-btn-white {
+    width: 100%;
+    height: 55px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.coupon-btn {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.pay-btn-white {
+    background: #fff;
+    color: #000;
+    font-weight: 800;
+    border: none;
+}
+
+.back-link-text {
+    background: none;
+    border: none;
+    color: #666;
+    text-decoration: underline;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}

@@ -1,0 +1,259 @@
+/* ==========================================================
+   Women Persona Test Page
+   기존 App.css 톤: 블랙 배경 + 화이트 카드 + 중앙 정렬
+   ========================================================== */
+
+.women-persona-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.women-persona-wrapper {
+  max-width: 1040px;
+  gap: 28px;
+}
+
+.women-progress-wrap {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 10px;
+}
+
+.women-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #aaa;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.women-question-block {
+  width: 100%;
+}
+
+.women-question-title {
+  margin-bottom: 28px !important;
+  word-break: keep-all;
+}
+
+/* ==========================================================
+   Women Snap Choice Grid
+   4컷 이미지 선택 영역
+   ========================================================== */
+
+.women-snap-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.women-snap-grid.subgroup-grid {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1040px;
+}
+
+.women-snap-card {
+  width: 100%;
+  background: #111;
+  color: #000;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.women-snap-card:hover {
+  transform: translateY(-6px);
+}
+
+.women-snap-card.selected {
+  border-color: #fff;
+  outline: 3px solid #666;
+}
+
+.women-snap-image-box {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: #111;
+  overflow: hidden;
+}
+
+.women-snap-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ==========================================================
+   Women Group Result Page
+   ========================================================== */
+
+.women-result-wrapper {
+  max-width: 860px;
+}
+
+.women-group-result-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto 10px;
+  padding: 48px 42px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.women-result-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 18px;
+  margin: 12px auto 8px;
+  background: #fff;
+  color: #000;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.women-result-emoji {
+  font-size: 1.2rem;
+}
+
+.women-result-title {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.women-result-subtitle {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 8px 0 18px;
+  word-break: keep-all;
+}
+
+.women-group-persona-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.women-group-guide {
+  margin-top: 28px;
+  color: #bbb;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.women-keyword-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.women-keyword {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 8px 14px;
+  background: #fff;
+  color: #000;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.women-result-actions {
+  width: 100%;
+  max-width: 800px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.women-result-actions .start-btn,
+.women-result-actions .secondary-btn {
+  margin: 0 auto !important;
+}
+
+/* ==========================================================
+   Women Final Result Page
+   ========================================================== */
+
+.women-result-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto 10px;
+  padding: 48px 42px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.women-result-description {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  word-break: keep-all;
+}
+
+/* ==========================================================
+   Responsive
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  .women-snap-grid,
+  .women-snap-grid.subgroup-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 680px;
+  }
+}
+
+@media (max-width: 640px) {
+  .women-persona-page {
+    padding: 32px 16px;
+  }
+
+  .women-snap-grid,
+  .women-snap-grid.subgroup-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+
+  .women-group-result-card,
+  .women-result-card {
+    padding: 36px 24px;
+  }
+
+  .women-result-actions .start-btn,
+  .women-result-actions .secondary-btn {
+    width: 100% !important;
+    max-width: 360px;
+    font-size: 1.1rem !important;
+  }
+}

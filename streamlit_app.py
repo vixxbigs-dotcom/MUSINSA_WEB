@@ -1,16 +1,21 @@
 import base64
 import html
+import json
 import random
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
+
+from services.lite_recommender import (
+    get_price_ranges as get_lite_price_ranges,
+    recommend_products as recommend_lite_products,
+)
 
 
 # ============================================================
 # MUSINSA PERSONA LITE
-# React 원본 App.js / App.css 구조를 Streamlit으로 최대한 이식한 버전
+# React 원본 구조 + 남성 벡터 추천 + 여성 MD 스냅 큐레이션 Lite 버전
 # ============================================================
 
 st.set_page_config(
@@ -31,6 +36,8 @@ WOMEN_SUBGROUP_DIR = WOMEN_SNAP_DIR / "subgroup"
 # Streamlit Lite 추천 데이터
 MASTER_DATA_PATH = BASE_DIR / "data" / "lite" / "master_data_lite.npz"
 PERSONA_ITEM_PATH = BASE_DIR / "data" / "lite" / "persona_item_lite.csv"
+PROCESSED_IMAGE_DIR = BASE_DIR / "data" / "lite" / "processed_imgs"
+EXCLUDED_PRODUCT_PATH = BASE_DIR / "data" / "lite" / "excluded_product_ids.csv"
 
 
 # ============================================================
@@ -653,6 +660,458 @@ div[data-testid="stMetricValue"] {{
     font-size: 1.74rem;
   }}
 }}
+
+/* ==========================================================
+   UI V2 overrides - MUSINSA x Apple minimal direction
+   ========================================================== */
+
+/* Main: remove the oversized hero height that created the empty gap */
+.App {{
+  min-height: auto;
+  padding: clamp(54px, 8vh, 96px) 0 18px;
+}}
+
+.main-title {{
+  margin-top: 48px;
+  margin-bottom: 58px;
+}}
+
+.description {{
+  margin-bottom: 18px;
+}}
+
+section[data-testid="stMain"]:has(.main-page-marker) .block-container {{
+  max-width: 1180px;
+  padding-top: 1rem;
+}}
+
+section[data-testid="stMain"]:has(.main-page-marker) button[kind="primary"] {{
+  min-height: 66px;
+  background: #fff !important;
+  color: #050505 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}}
+
+section[data-testid="stMain"]:has(.main-page-marker) button[kind="primary"] p {{
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}}
+
+/* Link-style actions: previous question / guide navigation */
+button[kind="tertiary"] {{
+  min-height: 30px !important;
+  padding: 2px 8px !important;
+  background: transparent !important;
+  color: #b8b8b8 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}}
+
+button[kind="tertiary"] p {{
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+}}
+
+button[kind="tertiary"]:hover {{
+  background: transparent !important;
+  color: #fff !important;
+}}
+
+/* Result card */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) {{
+  width: min(700px, calc(100vw - 40px));
+  margin: clamp(54px, 12vh, 125px) auto 0;
+  padding: 46px 34px 34px;
+  background: #111 !important;
+  border: 0 !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) [data-testid="stVerticalBlock"] {{
+  gap: 0.72rem;
+}}
+
+.result-card-copy {{
+  padding: 2px 0 22px;
+}}
+
+.result-card-label {{
+  margin: 0 0 8px;
+  color: #f4f4f4;
+  font-size: 20px;
+  font-weight: 500;
+}}
+
+.result-card-title {{
+  margin: 0;
+  color: #fff;
+  font-size: clamp(44px, 4vw, 58px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}}
+
+.result-card-desc {{
+  margin: 22px 0 0;
+  color: #aaa;
+  font-size: 17px;
+  line-height: 1.55;
+  word-break: keep-all;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) button[kind="secondary"] {{
+  min-height: 54px;
+  border-radius: 10px !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) button[kind="secondary"] p {{
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}}
+
+/* Persona guide */
+section[data-testid="stMain"]:has(.guide-page-marker) .block-container {{
+  max-width: 760px;
+  padding-top: 2.4rem;
+  padding-bottom: 2.2rem;
+}}
+
+.guide-page-title {{
+  margin: 0 0 54px;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 800;
+}}
+
+.persona-guide-grid {{
+  width: min(520px, 100%);
+  margin: 0 auto 42px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}}
+
+.persona-guide-card {{
+  min-height: 120px;
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #050505;
+  border-radius: 10px;
+}}
+
+.persona-guide-name {{
+  color: #050505;
+  font-size: 19px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}}
+
+.persona-guide-desc {{
+  margin: 8px 0 0;
+  color: #333;
+  font-size: 12px;
+  line-height: 1.42;
+  font-weight: 500;
+  word-break: keep-all;
+}}
+
+/* Budget card */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) {{
+  width: min(620px, calc(100vw - 40px));
+  margin: clamp(40px, 8vh, 76px) auto 0;
+  padding: 34px 26px 28px;
+  background: #111 !important;
+  border: 1px solid #303030 !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}}
+
+.price-card-head {{
+  margin-bottom: 16px;
+}}
+
+.price-card-head h2 {{
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}}
+
+.price-card-head p {{
+  margin: 10px 0 0;
+  color: #8f8f8f;
+  font-size: 14px;
+  font-weight: 500;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker) {{
+  margin: 0 0 10px;
+  padding: 9px 12px;
+  background: #090909 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker) [data-testid="stHorizontalBlock"] {{
+  align-items: center;
+}}
+
+.budget-label {{
+  width: 100%;
+  color: #f3f3f3;
+  font-size: 14px;
+  line-height: 40px;
+  font-weight: 800;
+  text-align: left !important;
+}}
+
+.budget-separator {{
+  color: #777;
+  font-size: 13px;
+  line-height: 40px;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) div[data-testid="stTextInput"] {{
+  margin: 0;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) div[data-testid="stTextInput"] input {{
+  min-height: 40px;
+  padding: 0 13px;
+  background: #242424 !important;
+  color: #e7e7e7 !important;
+  border: 1px solid #3c3c3c !important;
+  border-radius: 7px !important;
+  text-align: left !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) button[kind="secondary"] {{
+  min-height: 54px;
+  margin-top: 10px;
+  border-radius: 10px !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) button[kind="secondary"] p {{
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}}
+
+/* Collage */
+section[data-testid="stMain"]:has(.collage-page-marker) .block-container {{
+  max-width: 1120px;
+  padding-top: 1.4rem;
+  padding-bottom: 1.2rem;
+}}
+
+.collage-left-shell {{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2px;
+}}
+
+.collage-canvas-v2 {{
+  width: min(390px, 100%);
+  aspect-ratio: 0.72;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #9ca3af;
+  border-radius: 11px;
+  box-shadow: none;
+}}
+
+.collage-canvas-v2::after {{
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 9px;
+  pointer-events: none;
+}}
+
+.collage-canvas-v2 .canvas-product-v2 {{
+  position: absolute;
+  width: 38%;
+  height: 34%;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 8px rgba(0,0,0,0.18));
+  z-index: 2;
+}}
+
+.collage-canvas-v2 .canvas-product-v2:nth-child(1) {{ left: 7%; top: 18%; width: 43%; height: 48%; }}
+.collage-canvas-v2 .canvas-product-v2:nth-child(2) {{ right: 8%; top: 16%; width: 44%; height: 36%; }}
+.collage-canvas-v2 .canvas-product-v2:nth-child(3) {{ right: 10%; bottom: 7%; width: 39%; height: 44%; }}
+.collage-canvas-v2 .canvas-product-v2:nth-child(4) {{ left: 7%; bottom: 7%; width: 37%; height: 24%; }}
+.collage-canvas-v2 .canvas-product-v2:nth-child(5) {{ left: 44%; top: 22%; width: 18%; height: 24%; }}
+
+.collage-right-shell {{
+  max-height: 545px;
+  overflow-y: auto;
+  padding-right: 8px;
+}}
+
+.collage-right-shell::-webkit-scrollbar {{
+  width: 5px;
+}}
+
+.collage-right-shell::-webkit-scrollbar-thumb {{
+  background: #333;
+  border-radius: 999px;
+}}
+
+.collage-section-v2 {{
+  margin-bottom: 16px;
+}}
+
+.collage-category-head {{
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}}
+
+.collage-category-name {{
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: left !important;
+}}
+
+.shuffle-chip {{
+  min-width: 48px;
+  padding: 4px 10px;
+  color: #bdbdbd;
+  background: #262626;
+  border: 1px solid #353535;
+  border-radius: 5px;
+  font-size: 10px;
+  line-height: 1;
+}}
+
+.collage-item-grid-v2 {{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}}
+
+.collage-item-card-v2 {{
+  min-width: 0;
+  height: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 5px 9px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 9px;
+}}
+
+.collage-item-card-v2 img {{
+  width: 82%;
+  height: 72px;
+  object-fit: contain;
+}}
+
+.collage-item-price-v2 {{
+  margin: 0;
+  color: #050505;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 500;
+}}
+
+.collage-empty-v2 {{
+  justify-content: center;
+  color: #8b8b8b;
+  font-size: 10px;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker) button[kind="secondary"] {{
+  min-height: 38px;
+  background: #242424 !important;
+  color: #d8d8d8 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker) button[kind="secondary"] p {{
+  color: inherit !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker) button[kind="primary"] {{
+  min-height: 42px;
+  background: #fff !important;
+  color: #050505 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker) button[kind="primary"] p {{
+  color: inherit !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}}
+
+@media (max-width: 760px) {{
+  .persona-guide-grid {{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }}
+
+  .persona-guide-card {{
+    min-height: 126px;
+  }}
+
+  .main-title {{
+    margin-top: 34px;
+    margin-bottom: 40px;
+  }}
+
+  div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker),
+  div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) {{
+    padding-left: 20px;
+    padding-right: 20px;
+  }}
+
+  .collage-right-shell {{
+    max-height: none;
+    overflow: visible;
+  }}
+}}
+
 </style>
 """
 
@@ -806,7 +1265,14 @@ WOMEN_PERSONA_DESCRIPTIONS = {
     "스트릿": "오버핏, 그래픽, 볼드한 아이템으로 개성을 드러내는 스타일입니다.",
     "스포티": "져지, 트랙팬츠, 스니커즈처럼 활동적이고 에너지 있는 스타일을 선호합니다.",
     "캐주얼": "티셔츠, 데님, 스니커즈처럼 편안하고 자연스러운 데일리룩을 선호합니다.",
+    "오피스룩": "단정한 테일러링과 절제된 컬러로 세련된 비즈니스 무드를 완성합니다.",
 }
+
+WOMEN_GUIDE_PERSONAS = [
+    "클래식", "프레피룩", "미니멀", "오피스룩",
+    "워크웨어", "레트로", "고프코어", "걸리시",
+    "시크", "스트릿", "스포티", "캐주얼",
+]
 
 WOMEN_GROUP_QUESTIONS = [
     {
@@ -860,186 +1326,28 @@ WOMEN_SUBGROUP_QUESTIONS = {
 
 
 # ============================================================
-# 4. 추천 데이터 로딩 및 추천 로직
+# 4. Lite 추천 로직 연결
 # ============================================================
 
-@st.cache_data(show_spinner=False)
-def load_master_data():
-    if not MASTER_DATA_PATH.exists():
-        return None
-
-    data = np.load(MASTER_DATA_PATH, allow_pickle=True)
-    required = ["ids", "names", "prices", "imgs", "cats", "name_vecs", "brand_vecs", "img_vecs", "cat_vecs"]
-
-    missing = [key for key in required if key not in data]
-    if missing:
-        raise ValueError(f"master_data_lite.npz 키 누락: {missing}")
-
-    master = {}
-    for key in required:
-        val = data[key]
-        if key.endswith("_vecs"):
-            if getattr(val, "dtype", None) == object:
-                master[key] = np.array([np.array(x, dtype=np.float32) for x in val])
-            else:
-                master[key] = val.astype(np.float32)
-        else:
-            master[key] = val
-
-    return master
-
-
-@st.cache_data(show_spinner=False)
-def load_persona_item():
-    if not PERSONA_ITEM_PATH.exists():
-        return None
-
-    df = pd.read_csv(PERSONA_ITEM_PATH)
-
-    required = {"persona", "outfit", "product_id"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"persona_item_lite.csv 컬럼 누락: {sorted(missing)}")
-
-    return df
-
-
-def get_price_ranges(master):
-    category_map = {
-        "outer": "아우터",
-        "top": "상의",
-        "bottom": "바지",
-        "shoes": "신발",
-        "acc": "액세서리",
-    }
-
-    ranges = {}
-
-    if master is None:
-        return {
-            "outer": {"min": 0, "max": 300000},
-            "top": {"min": 0, "max": 150000},
-            "bottom": {"min": 0, "max": 150000},
-            "shoes": {"min": 0, "max": 250000},
-            "acc": {"min": 0, "max": 100000},
-        }
-
-    for eng_key, kor_val in category_map.items():
-        mask = master["cats"] == kor_val
-        prices = master["prices"][mask]
-
-        if len(prices) > 0:
-            ranges[eng_key] = {"min": int(np.min(prices)), "max": int(np.max(prices))}
-        else:
-            ranges[eng_key] = {"min": 0, "max": 0}
-
-    return ranges
+def get_price_ranges(gender=None):
+    return get_lite_price_ranges(
+        gender=gender,
+        npz_path=MASTER_DATA_PATH,
+        persona_item_path=PERSONA_ITEM_PATH,
+        excluded_path=EXCLUDED_PRODUCT_PATH,
+    )
 
 
 def recommend_products(persona, budget=None, gender=None, top_n=5):
-    master = load_master_data()
-    persona_item = load_persona_item()
-
-    if master is None or persona_item is None:
-        return {
-            "ok": False,
-            "message": "추천용 lite 데이터가 없습니다. data/lite/master_data_lite.npz와 data/lite/persona_item_lite.csv를 먼저 만들어주세요.",
-            "items": {},
-        }
-
-    df = persona_item.copy()
-
-    if gender and "gender" in df.columns:
-        df = df[df["gender"] == gender]
-
-    outfits = df[df["persona"] == persona]["outfit"].dropna().unique().tolist()
-    if not outfits:
-        return {
-            "ok": False,
-            "message": f"persona_item_lite.csv에 '{persona}' 페르소나의 outfit 데이터가 없습니다.",
-            "items": {},
-        }
-
-    selected_outfit = int(random.choice(outfits))
-    target_ids = df[(df["persona"] == persona) & (df["outfit"] == selected_outfit)]["product_id"].tolist()
-
-    ids = master["ids"]
-    target_indices = np.where(np.isin(ids, target_ids))[0]
-    if len(target_indices) == 0:
-        return {
-            "ok": False,
-            "message": "persona_item_lite.csv의 product_id가 master_data_lite.npz의 ids에 없습니다.",
-            "items": {},
-        }
-
-    target_item_map = {master["cats"][idx]: idx for idx in target_indices}
-
-    category_map = {
-        "outer": "아우터",
-        "top": "상의",
-        "bottom": "바지",
-        "shoes": "신발",
-        "acc": "액세서리",
-    }
-
-    budget = budget or {}
-    final_items = {}
-
-    for eng_key, kor_val in category_map.items():
-        if kor_val not in target_item_map:
-            final_items[eng_key] = []
-            continue
-
-        target_idx = target_item_map[kor_val]
-
-        sim_name = np.dot(master["name_vecs"], master["name_vecs"][target_idx])
-        sim_brand = np.dot(master["brand_vecs"], master["brand_vecs"][target_idx])
-        sim_img = np.dot(master["img_vecs"], master["img_vecs"][target_idx])
-        sim_cat = np.dot(master["cat_vecs"], master["cat_vecs"][target_idx])
-
-        final_scores = (sim_name * 0.1) + (sim_brand * 0.1) + (sim_img * 0.6) + (sim_cat * 0.1)
-
-        price_mask = np.ones(len(master["prices"]), dtype=bool)
-        min_price = budget.get(eng_key, {}).get("min")
-        max_price = budget.get(eng_key, {}).get("max")
-
-        if min_price is not None:
-            price_mask &= master["prices"] >= min_price
-        if max_price is not None:
-            price_mask &= master["prices"] <= max_price
-
-        combined_mask = (master["cats"] == kor_val) & price_mask
-        cat_scores = final_scores[combined_mask]
-        cat_real_indices = np.where(combined_mask)[0]
-
-        if len(cat_scores) == 0:
-            final_items[eng_key] = []
-            continue
-
-        sorted_indices = np.argsort(cat_scores)[::-1][:100]
-        sample_count = min(top_n, len(sorted_indices))
-        selected_local = np.random.choice(sorted_indices, sample_count, replace=False)
-
-        items = []
-        for loc_idx in selected_local:
-            original_idx = cat_real_indices[loc_idx]
-            items.append({
-                "product_id": int(master["ids"][original_idx]),
-                "product_name": str(master["names"][original_idx]),
-                "price": int(master["prices"][original_idx]),
-                "img_url": str(master["imgs"][original_idx]),
-                "category": kor_val,
-                "score": float(cat_scores[loc_idx]),
-            })
-
-        final_items[eng_key] = items
-
-    return {
-        "ok": True,
-        "persona": persona,
-        "outfit": selected_outfit,
-        "items": final_items,
-    }
+    return recommend_lite_products(
+        persona=persona,
+        budget=budget,
+        gender=gender,
+        top_n=top_n,
+        npz_path=MASTER_DATA_PATH,
+        persona_item_path=PERSONA_ITEM_PATH,
+        excluded_path=EXCLUDED_PRODUCT_PATH,
+    )
 
 
 # ============================================================
@@ -1089,10 +1397,15 @@ def reset_all():
     rerun()
 
 
-def centered_button(label, key, on_click=None):
+def centered_button(label, key, on_click=None, button_type="secondary"):
     c1, c2, c3 = st.columns([1, 2.2, 1])
     with c2:
-        clicked = st.button(label, key=key, use_container_width=True)
+        clicked = st.button(
+            label,
+            key=key,
+            use_container_width=True,
+            type=button_type,
+        )
     if clicked and on_click:
         on_click()
     return clicked
@@ -1133,6 +1446,16 @@ def format_price(value):
         return "-"
 
 
+def parse_price_value(value, fallback=0):
+    cleaned = str(value).replace(",", "").replace("원", "").strip()
+    if not cleaned:
+        return int(fallback)
+    try:
+        return max(0, int(cleaned))
+    except (TypeError, ValueError):
+        return int(fallback)
+
+
 def get_background_src(persona):
     filename = PERSONA_BACK_MAP.get(persona)
     if not filename:
@@ -1150,6 +1473,32 @@ def item_img_src(url_or_path):
     if path.exists():
         return local_image_src(path) or ""
     return value
+
+
+def get_product_image_src(item):
+    """
+    사전 누끼 이미지가 있으면 우선 사용하고, 없으면 원본 img_url로 대체합니다.
+
+    지원 경로:
+      data/lite/processed_imgs/{product_id}.webp
+      data/lite/processed_imgs/{product_id}.png
+      data/lite/processed_imgs/{product_id}.jpg
+    """
+    if not item:
+        return ""
+
+    product_id = item.get("product_id")
+    if product_id is not None:
+        try:
+            product_id = int(product_id)
+            for suffix in (".webp", ".png", ".jpg", ".jpeg"):
+                processed_path = PROCESSED_IMAGE_DIR / f"{product_id}{suffix}"
+                if processed_path.exists():
+                    return local_image_src(processed_path) or ""
+        except (TypeError, ValueError):
+            pass
+
+    return item_img_src(item.get("img_url", ""))
 
 
 def get_first_selected_items(items_by_category):
@@ -1212,6 +1561,7 @@ def calculate_women_group(answers):
 # ============================================================
 
 def render_main():
+    st.markdown("<div class='main-page-marker'></div>", unsafe_allow_html=True)
     st.markdown(
         """
         <div class="App fade-in">
@@ -1236,12 +1586,14 @@ def render_main():
         "남성 텍스트 페르소나 검사하기",
         "main_men_start",
         lambda: start_men_test(),
+        button_type="primary",
     )
 
     centered_button(
         "여성 스냅 페르소나 검사하기",
         "main_women_start",
         lambda: start_women_test(),
+        button_type="primary",
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1252,7 +1604,6 @@ def render_main():
         persona_exists = PERSONA_ITEM_PATH.exists()
         if not master_exists or not persona_exists:
             st.info("현재 버전은 페르소나 검사는 바로 가능하고, 실제 상품 추천은 data/lite 데이터가 준비되면 작동합니다.")
-
 
 def start_men_test():
     st.session_state.gender = "men"
@@ -1305,7 +1656,7 @@ def render_men_question():
             lambda a=answer: handle_men_answer(a),
         )
 
-    centered_button("이전 질문으로", f"{step}_{idx}_back", go_men_back)
+    centered_button("이전 질문으로", f"{step}_{idx}_back", go_men_back, button_type="tertiary")
 
 
 def handle_men_answer(answer):
@@ -1370,47 +1721,76 @@ def render_men_result():
     result = st.session_state.result
     desc = PERSONA_DESCRIPTIONS.get(result, "")
 
+    with st.container(border=True):
+        st.markdown("<div class='result-page-marker'></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="result-card-copy fade-in">
+              <p class="result-card-label">당신의 페르소나는</p>
+              <h1 class="result-card-title">{html.escape(result)}</h1>
+              <p class="result-card-desc">{html.escape(desc)}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        col_confirm, col_retry = st.columns(2, gap="small")
+        with col_confirm:
+            if st.button("확인", key="men_result_confirm", use_container_width=True):
+                go("price_setting")
+        with col_retry:
+            if st.button("다시하기", key="men_result_retry", use_container_width=True):
+                reset_all()
+
+        if st.button(
+            "모든 페르소나 설명 보기",
+            key="men_result_desc",
+            use_container_width=True,
+            type="tertiary",
+        ):
+            go("descriptions")
+
+
+def render_descriptions():
+    st.markdown("<div class='guide-page-marker'></div>", unsafe_allow_html=True)
+
+    if st.session_state.gender == "women":
+        names = WOMEN_GUIDE_PERSONAS
+        descriptions = WOMEN_PERSONA_DESCRIPTIONS
+    else:
+        names = PERSONAS
+        descriptions = PERSONA_DESCRIPTIONS
+
+    cards = []
+    for name in names:
+        desc = descriptions.get(name, "")
+        cards.append(
+            f"""
+            <article class="persona-guide-card">
+              <div class="persona-guide-name">{html.escape(name)}</div>
+              <p class="persona-guide-desc">{html.escape(desc)}</p>
+            </article>
+            """
+        )
+
     st.markdown(
         f"""
-        <div class="result-container-lite fade-in">
-          <p class="result-label">당신의 페르소나는</p>
-          <h1 class="result-title-main">{html.escape(result)}</h1>
-          <p class="persona-desc">{html.escape(desc)}</p>
-        </div>
+        <section class="fade-in">
+          <h2 class="guide-page-title">페르소나 가이드</h2>
+          <div class="persona-guide-grid">
+            {''.join(cards)}
+          </div>
+        </section>
         """,
         unsafe_allow_html=True,
     )
 
-    centered_button("확인", "men_result_confirm", lambda: go("price_setting"))
-    centered_button("다시하기", "men_result_retry", reset_all)
-    centered_button("모든 페르소나 설명 보기", "men_result_desc", lambda: go("descriptions"))
-
-
-def render_descriptions():
-    st.markdown("<h2 class='price-title'>페르소나 가이드</h2>", unsafe_allow_html=True)
-
-    rows = [PERSONAS[i:i + 4] for i in range(0, len(PERSONAS), 4)]
-    for row in rows:
-        cols = st.columns(4, gap="medium")
-        for col, name in zip(cols, row):
-            with col:
-                desc = PERSONA_DESCRIPTIONS.get(name, "")
-                st.markdown(
-                    f"""
-                    <div style="background:#fff;color:#000;border-radius:12px;width:100%;height:140px;
-                                display:flex;flex-direction:column;justify-content:center;align-items:center;
-                                padding:12px;margin-bottom:18px;">
-                      <strong style="font-size:1.25rem;font-weight:800;color:#000;">{html.escape(name)}</strong>
-                      <p style="font-size:0.95rem;line-height:1.35;color:#333;margin:8px 0 0 0;word-break:keep-all;">
-                        {html.escape(desc)}
-                      </p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-    centered_button("결과로 돌아가기", "desc_back", lambda: go("result"))
-
+    centered_button(
+        "결과로 돌아가기",
+        "desc_back",
+        lambda: go("women_result" if st.session_state.gender == "women" else "result"),
+        button_type="tertiary",
+    )
 
 def render_women_group_test():
     idx = len(st.session_state.women_group_answers)
@@ -1543,34 +1923,44 @@ def render_women_result():
     if not final:
         go("women_group_test")
 
-    group = final["group_info"]
     persona = final["persona"]
     desc = final["description"]
 
-    st.markdown(
-        f"""
-        <div class="result-container-lite fade-in">
-          <p class="result-label">당신의 여성복 페르소나는</p>
-          <div class="group-pill">{group['emoji']} GROUP {group['id']} · {html.escape(group['label'])}</div>
-          <h1 class="result-title-main">{html.escape(persona)}</h1>
-          <p class="persona-desc">{html.escape(desc)}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    with st.container(border=True):
+        st.markdown("<div class='result-page-marker'></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="result-card-copy fade-in">
+              <p class="result-card-label">당신의 페르소나는</p>
+              <h1 class="result-card-title">{html.escape(persona)}</h1>
+              <p class="result-card-desc">{html.escape(desc)}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    centered_button("추천 코디 보러가기", "women_result_confirm", lambda: go("price_setting"))
-    centered_button("다시 검사하기", "women_result_retry", start_women_test)
-    centered_button("처음으로 돌아가기", "women_result_home", reset_all)
+        col_confirm, col_retry = st.columns(2, gap="small")
+        with col_confirm:
+            if st.button("확인", key="women_result_confirm", use_container_width=True):
+                go("price_setting")
+        with col_retry:
+            if st.button("다시하기", key="women_result_retry", use_container_width=True):
+                start_women_test()
 
+        if st.button(
+            "모든 페르소나 설명 보기",
+            key="women_result_desc",
+            use_container_width=True,
+            type="tertiary",
+        ):
+            go("descriptions")
 
 def render_price_setting():
     persona = st.session_state.result
     if not persona:
         go("main")
 
-    master = load_master_data()
-    ranges = get_price_ranges(master)
+    ranges = get_price_ranges(st.session_state.gender)
 
     category_labels = {
         "outer": "아우터",
@@ -1580,20 +1970,21 @@ def render_price_setting():
         "acc": "액세서리",
     }
 
-    st.markdown(
-        f"""
-        <div class="price-setting-container-lite fade-in">
-          <h2 class="price-title">예산 설정</h2>
-          <p class="price-subtitle">각 카테고리별로 원하는 가격대를 입력해주세요.</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
     budget = {}
-    c1, c2, c3 = st.columns([1, 2.6, 1])
+    has_error = False
 
-    with c2:
+    with st.container(border=True):
+        st.markdown("<div class='price-page-marker'></div>", unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="price-card-head fade-in">
+              <h2>예산 설정</h2>
+              <p>각 카테고리별로 원하는 가격대를 입력해주세요.</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         for cat, label in category_labels.items():
             r = ranges.get(cat, {"min": 0, "max": 300000})
             min_bound = int(r.get("min", 0))
@@ -1601,38 +1992,58 @@ def render_price_setting():
             if max_bound <= 0:
                 max_bound = 300000
 
-            st.markdown(f"<div class='price-cat-label-lite'>{label}</div>", unsafe_allow_html=True)
+            with st.container(border=True):
+                st.markdown("<div class='budget-row-marker'></div>", unsafe_allow_html=True)
+                label_col, min_col, sep_col, max_col = st.columns(
+                    [0.72, 1.48, 0.16, 1.48],
+                    gap="small",
+                )
 
-            col_min, col_max = st.columns(2)
-            with col_min:
-                min_price = st.number_input(
-                    f"{label} 최소",
-                    min_value=0,
-                    max_value=max(max_bound * 2, 1),
-                    value=min_bound,
-                    step=5000,
-                    key=f"min_{cat}",
-                )
-            with col_max:
-                max_price = st.number_input(
-                    f"{label} 최대",
-                    min_value=0,
-                    max_value=max(max_bound * 2, 1),
-                    value=max_bound,
-                    step=5000,
-                    key=f"max_{cat}",
-                )
+                with label_col:
+                    st.markdown(f"<div class='budget-label'>{html.escape(label)}</div>", unsafe_allow_html=True)
+                with min_col:
+                    min_text = st.text_input(
+                        f"{label} 최소",
+                        value=f"{min_bound:,}",
+                        key=f"min_{cat}",
+                        label_visibility="collapsed",
+                    )
+                with sep_col:
+                    st.markdown("<div class='budget-separator'>~</div>", unsafe_allow_html=True)
+                with max_col:
+                    max_text = st.text_input(
+                        f"{label} 최대",
+                        value=f"{max_bound:,}",
+                        key=f"max_{cat}",
+                        label_visibility="collapsed",
+                    )
+
+            min_price = parse_price_value(min_text, min_bound)
+            max_price = parse_price_value(max_text, max_bound)
 
             if min_price > max_price:
-                st.error("최소 가격이 최대 가격보다 클 수 없습니다.")
+                has_error = True
+                st.error(f"{label}: 최소 가격은 최대 가격보다 작아야 합니다.")
 
-            budget[cat] = {"min": int(min_price), "max": int(max_price)}
+            budget[cat] = {"min": min_price, "max": max_price}
 
-    st.session_state.budget = budget
+        st.session_state.budget = budget
 
-    centered_button("추천 상품 확인하기", "price_submit", run_recommendation)
-    centered_button("다시하기", "price_reset", reset_all)
+        col_submit, col_reset = st.columns(2, gap="small")
+        with col_submit:
+            submit = st.button(
+                "추천 상품 확인하기",
+                key="price_submit",
+                use_container_width=True,
+                disabled=has_error,
+            )
+        with col_reset:
+            retry = st.button("다시하기", key="price_reset", use_container_width=True)
 
+        if submit:
+            run_recommendation()
+        if retry:
+            reset_all()
 
 def run_recommendation():
     with st.spinner("분석 중..."):
@@ -1660,36 +2071,7 @@ def render_collage():
         return
 
     items_by_category = rec.get("items", {})
-    selected_items = get_first_selected_items(items_by_category)
-    st.session_state.selected_items = selected_items
-
-    bg_src = get_background_src(persona)
-    bg_style = f"background-image:url('{bg_src}');" if bg_src else "background:#050505;"
-
-    canvas_imgs = ""
-    for cat in ["outer", "top", "bottom", "shoes", "acc"]:
-        item = selected_items.get(cat)
-        if not item:
-            continue
-        src = html.escape(item_img_src(item.get("img_url", "")))
-        canvas_imgs += f"<img class='canvas-product-lite' src='{src}' alt=''>"
-
-    st.markdown(
-        f"""
-        <div class="advanced-collage-layout-lite fade-in">
-          <section class="left-canvas-area-lite">
-            <div class="canvas-header-lite">
-              <p class="instruction">포트폴리오 Lite 버전: 추천 상품을 코디 보드 형태로 표시합니다.</p>
-            </div>
-            <div class="collage-canvas-lite" style="{bg_style}">
-              {canvas_imgs}
-            </div>
-          </section>
-          <section class="right-list-area-lite">
-            <h2 class="sidebar-title">{html.escape(persona)} 스타일 추천</h2>
-        """,
-        unsafe_allow_html=True,
-    )
+    bg_src = get_background_src(persona) or ""
 
     category_order = ["outer", "top", "bottom", "shoes", "acc"]
     category_labels = {
@@ -1700,48 +2082,182 @@ def render_collage():
         "acc": "ACC",
     }
 
-    for cat in category_order:
-        items = items_by_category.get(cat, [])
+    def make_component_item(item, cat):
+        return {
+            "product_id": item.get("product_id"),
+            "product_name": str(item.get("product_name", "")),
+            "price": int(item.get("price") or 0),
+            "price_text": format_price(item.get("price")),
+            "img_url": get_product_image_src(item),
+            "category": cat,
+            "category_label": category_labels.get(cat, cat.upper()),
+        }
 
-        st.markdown(
-            f"""
-            <div class="cat-section-lite">
-              <div class="cat-header-lite">
-                <span class="cat-name">{category_labels[cat]}</span>
+    def data_attr(item):
+        return html.escape(json.dumps(item, ensure_ascii=False), quote=True)
+
+    sections_html = []
+    first_items_for_autoplace = {}
+
+    for cat in category_order:
+        raw_items = items_by_category.get(cat, [])[:5]
+        component_items = [make_component_item(item, cat) for item in raw_items]
+        if component_items:
+            first_items_for_autoplace[cat] = component_items[0]
+
+        cards_html = []
+        for item in component_items:
+            img_src = html.escape(item.get("img_url", ""), quote=True)
+            name = html.escape(item.get("product_name", ""), quote=True)
+            price = html.escape(item.get("price_text", "-"))
+            payload = data_attr(item)
+            cards_html.append(
+                f'''
+                <article class="item-card">
+                  <div class="img-box">
+                    <img class="draggable-product" src="{img_src}" alt="{name}" draggable="true" data-item="{payload}">
+                  </div>
+                  <p class="price-text">{price}</p>
+                </article>
+                '''
+            )
+
+        for _ in range(max(0, 5 - len(component_items))):
+            cards_html.append(
+                '''
+                <article class="item-card empty-slot">
+                  해당 상품 없음
+                </article>
+                '''
+            )
+
+        sections_html.append(
+            f'''
+            <section class="cat-section" data-cat="{html.escape(cat)}">
+              <div class="cat-header">
+                <span class="cat-name">{html.escape(category_labels.get(cat, cat.upper()))}</span>
+                <button class="shuffle-btn" type="button" data-shuffle="{html.escape(cat)}">셔플</button>
               </div>
-              <div class="item-grid-lite">
-            """,
-            unsafe_allow_html=True,
+              <div class="item-grid">
+                {''.join(cards_html)}
+              </div>
+            </section>
+            '''
         )
 
-        cards = ""
-        for i in range(5):
-            if i < len(items):
-                item = items[i]
-                img = html.escape(item_img_src(item.get("img_url", "")))
-                name = html.escape(str(item.get("product_name", "")))
-                price = format_price(item.get("price"))
-                cards += f"""
-                <div class="item-card-lite">
-                  <div class="img-box-lite"><img src="{img}" alt=""></div>
-                  <div class="product-name-lite">{name}</div>
-                  <p class="price-text">{price}</p>
-                </div>
-                """
-            else:
-                cards += """
-                <div class="item-card-lite empty-slot-lite">
-                  해당 상품 없음
-                </div>
-                """
+    auto_payload_json = json.dumps(first_items_for_autoplace, ensure_ascii=False).replace("</", "<\\/")
+    bg_style = f"background-image:url('{html.escape(bg_src, quote=True)}');" if bg_src else "background:#f4efe4;"
 
-        st.markdown(cards + "</div></div>", unsafe_allow_html=True)
+    component_html = f'''
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * {{ box-sizing: border-box; }}
+  html, body {{ margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+  .advanced-collage-layout {{ display: flex; flex-direction: row; width: 100%; height: 742px; background-color: #000; padding: 18px 34px 12px; gap: 62px; justify-content: center; align-items: center; overflow: hidden; }}
+  .left-canvas-area {{ flex: 0 0 430px; height: 710px; display: flex; flex-direction: column; align-items: center; justify-content: center; }}
+  .canvas-header {{ width: 100%; text-align: center; }}
+  .instruction {{ font-size: 12px; color: #777; margin: 0 0 12px; letter-spacing: -0.01em; }}
+  .collage-canvas {{ width: 390px; height: 542px; border: 1px solid #9ca3af; border-radius: 11px; position: relative; overflow: hidden; background-size: cover; background-position: center; box-shadow: none; }}
+  .collage-canvas::after {{ content: ""; position: absolute; inset: 8px; border: 1px solid rgba(255,255,255,0.72); border-radius: 9px; pointer-events: none; z-index: 1; }}
+  .canvas-item {{ position: absolute; cursor: move; z-index: 10; transform-origin: center center; }}
+  .canvas-item img {{ width: 150px; user-select: none; pointer-events: none; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.20)); }}
+  .right-list-area {{ flex: 0 0 610px; height: 690px; display: flex; flex-direction: column; text-align: left; overflow-y: auto; padding-right: 12px; }}
+  .right-list-area::-webkit-scrollbar {{ width: 5px; }} .right-list-area::-webkit-scrollbar-thumb {{ background: #333; border-radius: 999px; }}
+  .sidebar-title {{ font-size: 17px; font-weight: 800; color: #fff; margin: 0 0 16px; letter-spacing: 1.5px; text-align: left; }}
+  .cat-section {{ margin-bottom: 16px; }}
+  .cat-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }}
+  .cat-name {{ font-size: 12px; font-weight: 800; color: #fff; }}
+  .shuffle-btn {{ min-width: 48px; height: 22px; padding: 0 10px; color: #bdbdbd; background: #262626; border: 1px solid #353535; border-radius: 5px; font-size: 10px; cursor: pointer; }}
+  .item-grid {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }}
+  .item-card {{ min-width: 0; height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 8px 5px 9px; overflow: hidden; background: #fff; border-radius: 9px; }}
+  .item-card.empty-slot {{ justify-content: center; color: #8b8b8b; font-size: 10px; }}
+  .img-box {{ width: 100%; height: 72px; display: flex; align-items: center; justify-content: center; }}
+  .img-box img {{ width: 82%; height: 72px; object-fit: contain; cursor: grab; user-select: none; }}
+  .price-text {{ margin: 0; color: #050505; font-size: 10px; line-height: 1; font-weight: 500; user-select: none; }}
+  .action-button-group {{ display: flex; flex-direction: column; width: 100%; gap: 9px; padding-top: 12px; }}
+  .button-group {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }}
+  .btn-secondary, .buy-red-btn {{ height: 38px; border-radius: 7px; border: 0; cursor: pointer; font-size: 12px; font-weight: 600; }}
+  .btn-secondary {{ background: #242424; color: #d8d8d8; }} .btn-secondary:hover {{ background: #111; color: #fff; }}
+  .buy-red-btn {{ width: 100%; height: 42px; background: #fff; color: #050505; font-weight: 800; }} .buy-red-btn:hover {{ background: #e5e5e5; }}
+  .notice {{ color: #777; font-size: 11px; text-align: center; margin-top: 2px; }}
+  .js-error {{ display: none; margin: 8px 0 0; padding: 8px; background: rgba(255, 77, 79, 0.14); border: 1px solid rgba(255, 77, 79, 0.35); border-radius: 8px; color: #ffb4b4; font-size: 11px; text-align: left; word-break: break-all; }}
+</style>
+</head>
+<body>
+  <div class="advanced-collage-layout">
+    <section class="left-canvas-area">
+      <div class="canvas-header"><p class="instruction">드래그: 배치 / 캔버스 안 드래그: 이동 / 휠: 크기 조절 / 우클릭: 삭제</p></div>
+      <div id="canvas" class="collage-canvas" style="{bg_style}"></div>
+    </section>
+    <section class="right-list-area">
+      <h2 id="title" class="sidebar-title">{html.escape(persona)} 스타일 추천</h2>
+      <div id="catalog">{''.join(sections_html)}</div>
+      <div class="action-button-group">
+        <div class="button-group">
+          <button class="btn-secondary" id="localResetBtn" type="button">초기화</button>
+          <button class="btn-secondary" id="autoPlaceBtn" type="button">자동배치</button>
+          <button class="btn-secondary" id="clearNoticeBtn" type="button">안내</button>
+        </div>
+        <button class="buy-red-btn" id="purchaseBtn" type="button">선택 후 구매하기</button>
+        <div class="notice" id="notice">Streamlit Lite 데모: 캔버스 조작은 이 화면 안에서 작동합니다.</div>
+        <div class="js-error" id="jsError"></div>
+      </div>
+    </section>
+  </div>
+<script>
+(function() {{
+  const AUTO_ITEMS = {auto_payload_json};
+  const canvas = document.getElementById('canvas');
+  const notice = document.getElementById('notice');
+  const jsError = document.getElementById('jsError');
+  const state = {{ selectedItems: [], draggingId: null, offsetX: 0, offsetY: 0, maxZ: 10 }};
+  function showError(error) {{ if (!jsError) return; jsError.style.display = 'block'; jsError.textContent = 'JS 오류: ' + (error && error.message ? error.message : String(error)); }}
+  window.addEventListener('error', function(event) {{ showError(event.error || event.message); }});
+  function parseItemFromElement(el) {{ const raw = el.getAttribute('data-item'); if (!raw) return null; return JSON.parse(raw); }}
+  function addCanvasItem(item, x, y, scale) {{ const id = Date.now() + '-' + Math.random().toString(16).slice(2); state.maxZ += 1; state.selectedItems.push({{...item, instanceId: id, x: x, y: y, scale: scale || 0.8, zIndex: state.maxZ}}); renderCanvas(); }}
+  function renderCanvas() {{ Array.from(canvas.querySelectorAll('.canvas-item')).forEach(function(node) {{ node.remove(); }}); state.selectedItems.forEach(function(item) {{ const node = document.createElement('div'); node.className = 'canvas-item'; node.dataset.id = item.instanceId; node.style.left = item.x + 'px'; node.style.top = item.y + 'px'; node.style.transform = 'scale(' + item.scale + ')'; node.style.zIndex = item.zIndex; const img = document.createElement('img'); img.src = item.img_url; img.alt = item.product_name || ''; img.draggable = false; node.appendChild(img); attachCanvasHandlers(node, item); canvas.appendChild(node); }}); }}
+  function attachCanvasHandlers(node, item) {{ node.addEventListener('mousedown', function(event) {{ event.preventDefault(); event.stopPropagation(); const target = state.selectedItems.find(function(it) {{ return it.instanceId === item.instanceId; }}); if (!target) return; state.draggingId = item.instanceId; state.offsetX = event.clientX - target.x; state.offsetY = event.clientY - target.y; state.maxZ += 1; target.zIndex = state.maxZ; node.style.zIndex = target.zIndex; }}); node.addEventListener('wheel', function(event) {{ event.preventDefault(); event.stopPropagation(); const target = state.selectedItems.find(function(it) {{ return it.instanceId === item.instanceId; }}); if (!target) return; const delta = event.deltaY > 0 ? -0.1 : 0.1; target.scale = Math.min(Math.max(target.scale + delta, 0.2), 3); node.style.transform = 'scale(' + target.scale + ')'; }}, {{ passive: false }}); node.addEventListener('contextmenu', function(event) {{ event.preventDefault(); state.selectedItems = state.selectedItems.filter(function(it) {{ return it.instanceId !== item.instanceId; }}); renderCanvas(); }}); }}
+  document.querySelectorAll('.draggable-product').forEach(function(img) {{ img.addEventListener('dragstart', function(event) {{ const item = parseItemFromElement(img); if (!item) return; const raw = JSON.stringify(item); event.dataTransfer.setData('application/json', raw); event.dataTransfer.setData('text/plain', raw); }}); }});
+  canvas.addEventListener('dragover', function(event) {{ event.preventDefault(); }});
+  canvas.addEventListener('drop', function(event) {{ event.preventDefault(); const raw = event.dataTransfer.getData('application/json') || event.dataTransfer.getData('text/plain'); if (!raw) return; try {{ const item = JSON.parse(raw); const rect = canvas.getBoundingClientRect(); addCanvasItem(item, event.clientX - rect.left - 60, event.clientY - rect.top - 60, 0.8); }} catch (error) {{ showError(error); }} }});
+  document.addEventListener('mousemove', function(event) {{ if (!state.draggingId) return; const target = state.selectedItems.find(function(it) {{ return it.instanceId === state.draggingId; }}); if (!target) return; target.x = event.clientX - state.offsetX; target.y = event.clientY - state.offsetY; const node = canvas.querySelector('[data-id="' + state.draggingId + '"]'); if (node) {{ node.style.left = target.x + 'px'; node.style.top = target.y + 'px'; }} }});
+  document.addEventListener('mouseup', function() {{ state.draggingId = null; }});
+  function autoPlace() {{ state.selectedItems = []; const positions = [{{cat:'outer',x:30,y:105,scale:1.18}},{{cat:'top',x:205,y:88,scale:1.05}},{{cat:'bottom',x:215,y:268,scale:1.05}},{{cat:'shoes',x:62,y:398,scale:0.92}},{{cat:'acc',x:182,y:178,scale:0.72}}]; positions.forEach(function(pos) {{ const item = AUTO_ITEMS[pos.cat]; if (!item) return; state.maxZ += 1; state.selectedItems.push({{...item, instanceId: Date.now() + '-' + Math.random().toString(16).slice(2), x: pos.x, y: pos.y, scale: pos.scale, zIndex: state.maxZ}}); }}); renderCanvas(); }}
+  function clearCanvas() {{ state.selectedItems = []; renderCanvas(); }}
+  function shuffleCategory(cat) {{ const section = document.querySelector('.cat-section[data-cat="' + cat + '"]'); if (!section) return; const grid = section.querySelector('.item-grid'); const cards = Array.from(grid.children); const productCards = cards.filter(function(card) {{ return !card.classList.contains('empty-slot'); }}); for (let i = productCards.length - 1; i > 0; i -= 1) {{ const j = Math.floor(Math.random() * (i + 1)); const temp = productCards[i]; productCards[i] = productCards[j]; productCards[j] = temp; }} grid.innerHTML = ''; productCards.forEach(function(card) {{ grid.appendChild(card); }}); cards.filter(function(card) {{ return card.classList.contains('empty-slot'); }}).forEach(function(card) {{ grid.appendChild(card); }}); }}
+  function purchaseDemo() {{ if (!state.selectedItems.length) {{ alert('캔버스에 상품을 먼저 드래그해 주세요.'); return; }} const total = state.selectedItems.reduce(function(sum, item) {{ return sum + Number(item.price || 0); }}, 0); const names = state.selectedItems.map(function(item) {{ return '- ' + (item.product_name || item.category_label || '상품'); }}).join('\\n'); alert('선택 상품 ' + state.selectedItems.length + '개\\n총액: ' + total.toLocaleString() + '원\\n\\n' + names); }}
+  document.getElementById('localResetBtn').onclick = clearCanvas;
+  document.getElementById('autoPlaceBtn').onclick = autoPlace;
+  document.getElementById('clearNoticeBtn').onclick = function() {{ notice.textContent = '상품 이미지를 오른쪽에서 왼쪽 캔버스로 드래그하세요. 캔버스 안에서는 이동/휠 확대/우클릭 삭제가 가능합니다.'; }};
+  document.getElementById('purchaseBtn').onclick = purchaseDemo;
+  document.querySelectorAll('[data-shuffle]').forEach(function(btn) {{ btn.addEventListener('click', function() {{ shuffleCategory(btn.getAttribute('data-shuffle')); }}); }});
+  autoPlace();
+}})();
+</script>
+</body>
+</html>
+'''
 
-    st.markdown("</section></div>", unsafe_allow_html=True)
+    st.markdown("<div class='collage-page-marker'></div>", unsafe_allow_html=True)
+    components.html(component_html, height=762, scrolling=False)
 
-    centered_button("다른 추천 보기", "shuffle_all", run_recommendation)
-    centered_button("이전으로", "collage_back", lambda: go("price_setting"))
-    centered_button("메인으로", "collage_home", reset_all)
+    ctrl_home, ctrl_reset, ctrl_back = st.columns(3, gap="small")
+    with ctrl_home:
+        home_clicked = st.button("메인으로", key="collage_home", use_container_width=True)
+    with ctrl_reset:
+        reset_clicked = st.button("다른 추천 보기", key="shuffle_all", use_container_width=True)
+    with ctrl_back:
+        back_clicked = st.button("이전으로", key="collage_back", use_container_width=True)
+
+    if home_clicked:
+        reset_all()
+    if reset_clicked:
+        run_recommendation()
+    if back_clicked:
+        go("price_setting")
 
 
 # ============================================================

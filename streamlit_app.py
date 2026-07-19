@@ -703,35 +703,44 @@ section[data-testid="stMain"]:has(.main-page-marker) button[kind="primary"] p {{
 /* Link-style actions: previous question / guide navigation */
 button[kind="tertiary"] {{
   min-height: 30px !important;
-  padding: 2px 8px !important;
+  padding: 4px 8px !important;
   background: transparent !important;
-  color: #b8b8b8 !important;
+  color: #aaa !important;
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  text-decoration: underline !important;
-  text-underline-offset: 4px;
+  text-decoration: none !important;
   font-size: 14px !important;
-  font-weight: 500 !important;
+  font-weight: 400 !important;
 }}
 
 button[kind="tertiary"] p {{
   color: inherit !important;
   font-size: inherit !important;
   font-weight: inherit !important;
-  text-decoration: underline !important;
-  text-underline-offset: 4px;
+  text-decoration: none !important;
 }}
 
 button[kind="tertiary"]:hover {{
   background: transparent !important;
-  color: #fff !important;
+  color: #eee !important;
 }}
 
 /* Result card */
+section[data-testid="stMain"]:has(.result-page-marker) .block-container {{
+  min-height: 94vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}}
+
+section[data-testid="stMain"]:has(.result-page-marker) .block-container > div {{
+  width: 100%;
+}}
+
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) {{
-  width: min(700px, calc(100vw - 40px));
-  margin: clamp(54px, 12vh, 125px) auto 0;
+  width: min(500px, calc(100vw - 40px));
+  margin: 0 auto;
   padding: 46px 34px 34px;
   background: #111 !important;
   border: 0 !important;
@@ -785,7 +794,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) button[
 
 /* Persona guide */
 section[data-testid="stMain"]:has(.guide-page-marker) .block-container {{
-  max-width: 760px;
+  max-width: 900px;
   padding-top: 2.4rem;
   padding-bottom: 2.2rem;
 }}
@@ -798,16 +807,17 @@ section[data-testid="stMain"]:has(.guide-page-marker) .block-container {{
 }}
 
 .persona-guide-grid {{
-  width: min(520px, 100%);
+  width: min(700px, 100%);
   margin: 0 auto 42px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
 }}
 
 .persona-guide-card {{
-  min-height: 120px;
-  padding: 16px 10px;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -835,9 +845,22 @@ section[data-testid="stMain"]:has(.guide-page-marker) .block-container {{
 }}
 
 /* Budget card */
+section[data-testid="stMain"]:has(.price-page-marker) .block-container {{
+  min-height: 94vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}}
+
+section[data-testid="stMain"]:has(.price-page-marker) .block-container > div {{
+  width: 100%;
+}}
+
 div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) {{
-  width: min(620px, calc(100vw - 40px));
-  margin: clamp(40px, 8vh, 76px) auto 0;
+  width: min(440px, calc(100vw - 36px));
+  margin: 0 auto;
   padding: 34px 26px 28px;
   background: #111 !important;
   border: 1px solid #303030 !important;
@@ -864,11 +887,12 @@ div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker) {{
 }}
 
 div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker) {{
-  margin: 0 0 10px;
-  padding: 9px 12px;
-  background: #090909 !important;
+  margin: 0 0 8px;
+  padding: 8px 4px;
+  background: transparent !important;
   border: 0 !important;
-  border-radius: 10px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }}
 
 div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker) [data-testid="stHorizontalBlock"] {{
@@ -1086,13 +1110,63 @@ section[data-testid="stMain"]:has(.collage-page-marker) button[kind="primary"] p
   font-weight: 800 !important;
 }}
 
+
+/* Women test: image itself is the button */
+section[data-testid="stMain"]:has(.women-test-marker) .block-container {{
+  max-width: 1320px;
+  padding-top: 2rem;
+}}
+
+.women-question-text {{
+  font-size: 2.02rem !important;
+  font-weight: 400 !important;
+  margin-bottom: 38px !important;
+}}
+
+.women-image-button-note {{
+  margin: -20px 0 30px;
+  color: #777;
+  font-size: 12px;
+  font-weight: 400;
+}}
+
+/* Individual background-image rules are injected dynamically in Python. */
+div[class*="st-key-women_group_"]:not([class*="st-key-women_group_back_"]) button,
+div[class*="st-key-women_sub_"]:not([class*="st-key-women_sub_back"]) button {{
+  width: 100% !important;
+  aspect-ratio: 3 / 4 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #252525 !important;
+  border-radius: 14px !important;
+  background-color: #111 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}}
+
+div[class*="st-key-women_group_"]:not([class*="st-key-women_group_back_"]) button p,
+div[class*="st-key-women_sub_"]:not([class*="st-key-women_sub_back"]) button p {{
+  display: none !important;
+}}
+
+div[class*="st-key-women_group_"]:not([class*="st-key-women_group_back_"]) button:hover,
+div[class*="st-key-women_sub_"]:not([class*="st-key-women_sub_back"]) button:hover {{
+  transform: translateY(-3px);
+  border-color: #aaa !important;
+  filter: brightness(1.04);
+}}
+
 @media (max-width: 760px) {{
   .persona-guide-grid {{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }}
 
   .persona-guide-card {{
-    min-height: 126px;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
   }}
 
   .main-title {{
@@ -1110,6 +1184,358 @@ section[data-testid="stMain"]:has(.collage-page-marker) button[kind="primary"] p
     max-height: none;
     overflow: visible;
   }}
+}}
+
+
+/* ==========================================================
+   UI patch: compact result cards, transparent navigation,
+   centered budget fields, stable collage controls
+   ========================================================== */
+
+/* All link/navigation actions: transparent background + light gray text */
+div[class*="st-key-men_result_desc"] button,
+div[class*="st-key-women_result_desc"] button,
+div[class*="st-key-desc_back"] button,
+div[class*="st-key-women_sub_back"] button,
+div[class*="st-key-women_group_back_"] button,
+div[class*="st-key-step1_"][class*="_back"] button,
+div[class*="st-key-step2_"][class*="_back"] button,
+div[class*="st-key-collage_back"] button {{
+  min-height: 32px !important;
+  padding: 4px 8px !important;
+  background: transparent !important;
+  color: #a9a9a9 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}}
+
+div[class*="st-key-men_result_desc"] button p,
+div[class*="st-key-women_result_desc"] button p,
+div[class*="st-key-desc_back"] button p,
+div[class*="st-key-women_sub_back"] button p,
+div[class*="st-key-women_group_back_"] button p,
+div[class*="st-key-step1_"][class*="_back"] button p,
+div[class*="st-key-step2_"][class*="_back"] button p,
+div[class*="st-key-collage_back"] button p {{
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}}
+
+div[class*="st-key-men_result_desc"] button:hover,
+div[class*="st-key-women_result_desc"] button:hover,
+div[class*="st-key-desc_back"] button:hover,
+div[class*="st-key-women_sub_back"] button:hover,
+div[class*="st-key-women_group_back_"] button:hover,
+div[class*="st-key-step1_"][class*="_back"] button:hover,
+div[class*="st-key-step2_"][class*="_back"] button:hover,
+div[class*="st-key-collage_back"] button:hover {{
+  background: transparent !important;
+  color: #ececec !important;
+}}
+
+/* Prevent centered navigation buttons from becoming giant white buttons */
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_group_back_"],
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_sub_back"],
+section[data-testid="stMain"]:has(.guide-page-marker)
+div[class*="st-key-desc_back"] {{
+  width: min(320px, 70vw);
+  margin: 16px auto 0;
+}}
+
+/* Result card: about 30% narrower and centered */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) {{
+  width: min(360px, calc(100vw - 36px)) !important;
+  padding: 38px 24px 26px !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+[data-testid="stHorizontalBlock"] {{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+div[class*="st-key-men_result_desc"],
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+div[class*="st-key-women_result_desc"] {{
+  width: 70%;
+  margin: 4px auto 0;
+}}
+
+/* Budget rows: center labels and inputs */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker)
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker)
+[data-testid="stHorizontalBlock"] {{
+  justify-content: center !important;
+  align-items: center !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker)
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.budget-row-marker)
+[data-testid="column"] {{
+  text-align: center !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker)
+.budget-label,
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker)
+.budget-separator {{
+  text-align: center !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.price-page-marker)
+div[data-testid="stTextInput"] input {{
+  text-align: center !important;
+}}
+
+/* Collage: keep stable original layout and only restyle the two action buttons */
+section[data-testid="stMain"]:has(.collage-page-marker)
+div[class*="st-key-collage_other_recommendation"] button {{
+  min-height: 38px !important;
+  background: #242424 !important;
+  color: #d8d8d8 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker)
+div[class*="st-key-collage_other_recommendation"] button p {{
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}}
+
+
+/* ==========================================================
+   Final women/result/collage stability patch
+   ========================================================== */
+
+/* Every women image choice uses exactly the same box geometry */
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_group_"]:not([class*="st-key-women_group_back_"]) button,
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_sub_"]:not([class*="st-key-women_sub_back"]) button {{
+  display: block !important;
+  width: 100% !important;
+  aspect-ratio: 3 / 4 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: #111 !important;
+  border: 1px solid #252525 !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}}
+
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_group_"]:not([class*="st-key-women_group_back_"]),
+section[data-testid="stMain"]:has(.women-test-marker)
+div[class*="st-key-women_sub_"]:not([class*="st-key-women_sub_back"]) {{
+  width: 100% !important;
+  margin: 0 !important;
+}}
+
+/* Result box: 40% narrower than the original 500px and about 30% taller */
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker) {{
+  width: min(300px, calc(100vw - 32px)) !important;
+  min-height: 430px !important;
+  padding: 48px 22px 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+> div {{
+  width: 100% !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+[data-testid="stVerticalBlock"] {{
+  width: 100% !important;
+  justify-content: center !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+.result-card-title {{
+  font-size: clamp(38px, 4vw, 48px) !important;
+}}
+
+div[data-testid="stVerticalBlockBorderWrapper"]:has(.result-page-marker)
+.result-card-desc {{
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+}}
+
+/* Keep collage markup from being interpreted as a code block */
+.collage-right-shell,
+.collage-right-shell section,
+.collage-right-shell article {{
+  white-space: normal !important;
+}}
+
+
+/* ==========================================================
+   Women back button + restored collage width patch
+   ========================================================== */
+
+/* 여성 테스트 이전 버튼을 남성의 '이전 질문으로'와 동일하게 고정 */
+section[data-testid="stMain"]:has(.women-test-marker)
+div.stButton > button[kind="tertiary"] {{
+  min-height: 32px !important;
+  padding: 4px 8px !important;
+  background: transparent !important;
+  color: #a9a9a9 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+}}
+
+section[data-testid="stMain"]:has(.women-test-marker)
+div.stButton > button[kind="tertiary"] p {{
+  margin: 0 !important;
+  color: #a9a9a9 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  text-decoration: none !important;
+}}
+
+section[data-testid="stMain"]:has(.women-test-marker)
+div.stButton > button[kind="tertiary"]:hover {{
+  background: transparent !important;
+  color: #eeeeee !important;
+  border: 0 !important;
+}}
+
+section[data-testid="stMain"]:has(.women-test-marker)
+div.stButton > button[kind="tertiary"]:hover p {{
+  color: #eeeeee !important;
+}}
+
+/* 복원한 components.html 콜라주가 잘리지 않도록 바깥 body 폭만 확대 */
+section[data-testid="stMain"]:has(.collage-page-marker)
+.block-container {{
+  width: 100% !important;
+  max-width: 1380px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker)
+div[data-testid="stElementContainer"]:has(iframe) {{
+  width: 100% !important;
+  max-width: none !important;
+}}
+
+section[data-testid="stMain"]:has(.collage-page-marker)
+iframe {{
+  width: 100% !important;
+  min-width: 0 !important;
+}}
+
+
+/* ==========================================================
+   Final patch: visible women back button and narrower wrappers
+   ========================================================== */
+
+/* 이미지 카드 선택자와 완전히 분리하여 글자를 강제 표시 */
+div[class*="st-key-women_group_back_"] button,
+div[class*="st-key-women_sub_back"] button {{
+  min-height: 32px !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  padding: 4px 8px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  color: #a9a9a9 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  filter: none !important;
+  transform: none !important;
+}}
+
+div[class*="st-key-women_group_back_"] button p,
+div[class*="st-key-women_sub_back"] button p,
+div[class*="st-key-women_group_back_"] button div[data-testid="stMarkdownContainer"],
+div[class*="st-key-women_sub_back"] button div[data-testid="stMarkdownContainer"] {{
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  color: #a9a9a9 !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+}}
+
+div[class*="st-key-women_group_back_"] button:hover,
+div[class*="st-key-women_sub_back"] button:hover {{
+  background: transparent !important;
+  color: #eeeeee !important;
+  border: 0 !important;
+  transform: none !important;
+}}
+
+div[class*="st-key-women_group_back_"] button:hover p,
+div[class*="st-key-women_sub_back"] button:hover p {{
+  color: #eeeeee !important;
+}}
+
+/* 사용자가 지정한 페이지 최상위 inner wrapper를 약 40% 축소 */
+section[data-testid="stMain"]:has(.result-page-marker) .block-container > div,
+section[data-testid="stMain"]:has(.price-page-marker) .block-container > div {{
+  width: 60% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}}
+
+@media (max-width: 760px) {{
+  section[data-testid="stMain"]:has(.result-page-marker) .block-container > div,
+  section[data-testid="stMain"]:has(.price-page-marker) .block-container > div {{
+    width: 100% !important;
+  }}
+}}
+
+
+/* ==========================================================
+   Collage canvas + iframe navigation bridge
+   ========================================================== */
+
+section[data-testid="stMain"]:has(.collage-page-marker)
+.block-container {{
+  max-width: 1440px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}}
+
+div[class*="st-key-collage_main_bridge"],
+div[class*="st-key-collage_back_bridge"] {{
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }}
 
 </style>
@@ -1439,6 +1865,45 @@ def render_image(path: Path, ratio="3/4"):
         )
 
 
+def image_choice_button(path: Path, key: str) -> bool:
+    """Render every women-style choice with the same full-image button UI."""
+    image_src = local_image_src(path)
+
+    if image_src:
+        background_rule = (
+            f"background-image:url('{image_src}') !important;"
+            "background-size:cover !important;"
+            "background-position:center !important;"
+            "background-repeat:no-repeat !important;"
+        )
+        button_label = "이미지 선택"
+    else:
+        background_rule = (
+            "background-image:none !important;"
+            "background-color:#111 !important;"
+        )
+        button_label = "이미지 없음"
+
+    st.markdown(
+        (
+            "<style>"
+            f"div[class*='st-key-{key}'] button{{{background_rule}}}"
+            f"div[class*='st-key-{key}'] button p{{"
+            f"{'display:none !important;' if image_src else 'display:block !important;color:#777 !important;font-size:12px !important;'}"
+            "}}"
+            "</style>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+    return st.button(
+        button_label,
+        key=key,
+        use_container_width=True,
+        type="secondary",
+    )
+
+
 def format_price(value):
     try:
         return f"{int(value):,}원"
@@ -1761,29 +2226,23 @@ def render_descriptions():
         names = PERSONAS
         descriptions = PERSONA_DESCRIPTIONS
 
-    cards = []
-    for name in names:
-        desc = descriptions.get(name, "")
-        cards.append(
-            f"""
-            <article class="persona-guide-card">
-              <div class="persona-guide-name">{html.escape(name)}</div>
-              <p class="persona-guide-desc">{html.escape(desc)}</p>
-            </article>
-            """
+    cards_html = "".join(
+        (
+            '<article class="persona-guide-card">'
+            f'<div class="persona-guide-name">{html.escape(name)}</div>'
+            f'<p class="persona-guide-desc">{html.escape(descriptions.get(name, ""))}</p>'
+            '</article>'
         )
-
-    st.markdown(
-        f"""
-        <section class="fade-in">
-          <h2 class="guide-page-title">페르소나 가이드</h2>
-          <div class="persona-guide-grid">
-            {''.join(cards)}
-          </div>
-        </section>
-        """,
-        unsafe_allow_html=True,
+        for name in names
     )
+
+    guide_html = (
+        '<section class="fade-in">'
+        '<h2 class="guide-page-title">페르소나 가이드</h2>'
+        f'<div class="persona-guide-grid">{cards_html}</div>'
+        '</section>'
+    )
+    st.markdown(guide_html, unsafe_allow_html=True)
 
     centered_button(
         "결과로 돌아가기",
@@ -1796,39 +2255,44 @@ def render_women_group_test():
     idx = len(st.session_state.women_group_answers)
 
     if idx >= len(WOMEN_GROUP_QUESTIONS):
-        st.session_state.women_group_result = calculate_women_group(st.session_state.women_group_answers)
-        st.session_state.page = "women_group_result"
+        st.session_state.women_group_result = calculate_women_group(
+            st.session_state.women_group_answers
+        )
+        st.session_state.page = "women_subgroup_test"
         rerun()
 
     question = WOMEN_GROUP_QUESTIONS[idx]
 
-    st.markdown("<div class='content-wrapper fade-in' style='max-width:1040px;margin:0 auto;'>", unsafe_allow_html=True)
-    progress_bar(idx + 1, len(WOMEN_GROUP_QUESTIONS))
-    st.markdown(f"<p class='q-count'>QUESTION {str(idx + 1).zfill(2)}</p>", unsafe_allow_html=True)
-    st.markdown(f"<h2 class='question-text'>{html.escape(question['title'])}</h2>", unsafe_allow_html=True)
+    st.markdown("<div class='women-test-marker'></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='content-wrapper fade-in' style='max-width:1040px;margin:0 auto;'>",
+        unsafe_allow_html=True,
+    )
+    progress_bar(idx + 1, 9)
+    st.markdown(
+        f"<p class='q-count'>QUESTION {str(idx + 1).zfill(2)}</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"<h2 class='question-text women-question-text'>{html.escape(question['title'])}</h2>",
+        unsafe_allow_html=True,
+    )
     st.markdown("</div>", unsafe_allow_html=True)
 
     cols = st.columns(4, gap="medium")
     for i, option in enumerate(question["options"]):
-        group_info = WOMEN_GROUPS[option["group"]]
         with cols[i]:
-            st.markdown("<div class='snap-card group-choice'>", unsafe_allow_html=True)
-            render_image(option["image"])
-            st.markdown(
-                f"""
-                <div class="snap-caption">{group_info['emoji']} {option['label']}</div>
-                <div class="snap-subcaption">{html.escape(group_info['label'])}</div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown("</div>", unsafe_allow_html=True)
-
-            if st.button("선택", key=f"women_group_{idx}_{i}", use_container_width=True):
+            key = f"women_group_{idx}_{i}"
+            if image_choice_button(option["image"], key):
                 st.session_state.women_group_answers.append(option)
                 rerun()
 
-    centered_button("이전으로", f"women_group_back_{idx}", go_women_group_back)
-
+    centered_button(
+        "이전 질문으로",
+        f"women_group_back_{idx}",
+        go_women_group_back,
+        button_type="tertiary",
+    )
 
 def go_women_group_back():
     if st.session_state.women_group_answers:
@@ -1840,67 +2304,46 @@ def go_women_group_back():
 
 
 def render_women_group_result():
-    group_result = st.session_state.women_group_result
-    if not group_result:
-        go("women_group_test")
-
-    group = group_result["info"]
-    personas = " / ".join(group["personas"])
-
-    st.markdown(
-        f"""
-        <div class="result-container-lite fade-in">
-          <p class="result-label">당신의 여성복 스타일 그룹은</p>
-          <div class="group-pill">{group['emoji']} GROUP {group['id']}</div>
-          <h1 class="result-title-main">{html.escape(group['label'])}</h1>
-          <p class="persona-desc">{html.escape(group['en'])}<br>{html.escape(personas)}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    score_cols = st.columns(4)
-    for col, group_id in zip(score_cols, ["A", "B", "C", "D"]):
-        with col:
-            st.metric(f"GROUP {group_id}", group_result["scores"].get(group_id, 0))
-
-    st.info("동점일 경우 대그룹 우선순위는 C > A > D > B 입니다.")
-
-    centered_button("세부 페르소나 찾기", "women_go_sub", lambda: go("women_subgroup_test"))
-    centered_button("이전 질문으로", "women_group_result_back", go_women_group_back)
-    centered_button("처음으로", "women_group_result_home", reset_all)
-
+    # 중간 판정 화면은 사용하지 않고 9번째 세부 페르소나 질문으로 이동합니다.
+    if not st.session_state.women_group_result:
+        st.session_state.women_group_result = calculate_women_group(
+            st.session_state.women_group_answers
+        )
+    go("women_subgroup_test")
 
 def render_women_subgroup_test():
     group_result = st.session_state.women_group_result
     if not group_result:
-        go("women_group_test")
+        if len(st.session_state.women_group_answers) < len(WOMEN_GROUP_QUESTIONS):
+            go("women_group_test")
+        group_result = calculate_women_group(st.session_state.women_group_answers)
+        st.session_state.women_group_result = group_result
 
     group_id = group_result["group"]
     group = group_result["info"]
     options = WOMEN_SUBGROUP_QUESTIONS[group_id]
 
-    st.markdown("<div class='content-wrapper fade-in' style='max-width:760px;margin:0 auto;'>", unsafe_allow_html=True)
-    st.markdown(f"<p class='top-title'>GROUP {group_id} · {html.escape(group['label'])}</p>", unsafe_allow_html=True)
-    st.markdown("<h1 class='main-title' style='font-size:3rem !important;'>마지막으로 하나만<br>더 골라주세요</h1>", unsafe_allow_html=True)
-    st.markdown("<div class='description'><strong>세부 여성복 페르소나를 찾습니다.</strong></div>", unsafe_allow_html=True)
+    st.markdown("<div class='women-test-marker'></div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='content-wrapper fade-in' style='max-width:1040px;margin:0 auto;'>",
+        unsafe_allow_html=True,
+    )
+    progress_bar(9, 9)
+    st.markdown(
+        "<p class='q-count'>QUESTION 09</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<h2 class='question-text women-question-text'>마지막으로 가장 마음에 드는 스타일을 골라주세요.</h2>",
+        unsafe_allow_html=True,
+    )
     st.markdown("</div>", unsafe_allow_html=True)
 
-    cols = st.columns(2, gap="large")
+    cols = st.columns(4, gap="medium")
     for i, option in enumerate(options):
-        with cols[i % 2]:
-            st.markdown("<div class='snap-card group-choice'>", unsafe_allow_html=True)
-            render_image(option["image"])
-            st.markdown(
-                f"""
-                <div class="snap-caption">{html.escape(option['label'])}</div>
-                <div class="snap-subcaption">GROUP {group_id}</div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown("</div>", unsafe_allow_html=True)
-
-            if st.button("선택", key=f"women_sub_{group_id}_{i}", use_container_width=True):
+        with cols[i]:
+            key = f"women_sub_{group_id}_{i}"
+            if image_choice_button(option["image"], key):
                 final = {
                     "gender": "women",
                     "group": group_id,
@@ -1915,8 +2358,20 @@ def render_women_subgroup_test():
                 st.session_state.page = "women_result"
                 rerun()
 
-    centered_button("그룹 결과로 돌아가기", "women_sub_back", lambda: go("women_group_result"))
+    centered_button(
+        "이전 질문으로",
+        "women_sub_back",
+        go_women_subgroup_back,
+        button_type="tertiary",
+    )
 
+
+def go_women_subgroup_back():
+    if st.session_state.women_group_answers:
+        st.session_state.women_group_answers.pop()
+    st.session_state.women_group_result = None
+    st.session_state.page = "women_group_test"
+    rerun()
 
 def render_women_result():
     final = st.session_state.women_final_result
@@ -1992,7 +2447,7 @@ def render_price_setting():
             if max_bound <= 0:
                 max_bound = 300000
 
-            with st.container(border=True):
+            with st.container(border=False):
                 st.markdown("<div class='budget-row-marker'></div>", unsafe_allow_html=True)
                 label_col, min_col, sep_col, max_col = st.columns(
                     [0.72, 1.48, 0.16, 1.48],
@@ -2051,7 +2506,7 @@ def run_recommendation():
             persona=st.session_state.result,
             budget=st.session_state.budget,
             gender=st.session_state.gender,
-            top_n=5,
+            top_n=25,
         )
     st.session_state.page = "collage"
     rerun()
@@ -2073,14 +2528,72 @@ def render_collage():
     items_by_category = rec.get("items", {})
     bg_src = get_background_src(persona) or ""
 
-    category_order = ["outer", "top", "bottom", "shoes", "acc"]
+    display_sections = [
+        {"key": "outer", "source": "outer", "label": "OUTER"},
+        {"key": "top", "source": "top", "label": "TOP"},
+        {"key": "bottom", "source": "bottom", "label": "BOTTOM"},
+        {"key": "shoes", "source": "shoes", "label": "SHOES"},
+        {"key": "acc_1", "source": "acc", "label": "ACC 1"},
+        {"key": "acc_2", "source": "acc", "label": "ACC 2"},
+    ]
     category_labels = {
-        "outer": "OUTER",
-        "top": "TOP",
-        "bottom": "BOTTOM",
-        "shoes": "SHOES",
-        "acc": "ACC",
+        section["key"]: section["label"]
+        for section in display_sections
     }
+
+    def accessory_kind(item):
+        """액세서리를 넓은 품목군으로 분류합니다."""
+        lower = str(item.get("lower_category", "")).strip().lower()
+        name = str(item.get("product_name", "")).strip().lower()
+        text_value = f"{lower} {name}"
+
+        kind_rules = [
+            ("주얼리", ["주얼리", "목걸이", "네크리스", "귀걸이", "이어링", "반지", "링", "팔찌", "브레이슬릿"]),
+            ("모자", ["모자", "비니", "캡", "버킷", "햇", "볼캡"]),
+            ("가방", ["가방", "백팩", "숄더백", "토트백", "크로스", "메신저", "에코백", "파우치", "더플백", "웨이스트 백"]),
+            ("안경", ["선글라스", "안경", "아이웨어"]),
+            ("벨트", ["벨트"]),
+            ("양말", ["양말", "레그웨어", "삭스", "스타킹"]),
+            ("시계", ["시계", "워치"]),
+            ("머플러", ["머플러", "스카프"]),
+            ("지갑", ["지갑", "머니클립", "카드지갑"]),
+        ]
+
+        for kind, keywords in kind_rules:
+            if any(keyword in text_value for keyword in keywords):
+                return kind
+
+        return lower or "기타"
+
+    def diversify_accessories(items):
+        """
+        같은 종류가 연속해서 몰리지 않도록 lower_category 기반으로
+        라운드로빈 정렬합니다. 상품 ID 중복도 제거합니다.
+        """
+        buckets = {}
+        seen_product_ids = set()
+
+        for item in items:
+            product_id = item.get("product_id")
+            if product_id in seen_product_ids:
+                continue
+            seen_product_ids.add(product_id)
+
+            kind = accessory_kind(item)
+            buckets.setdefault(kind, []).append(item)
+
+        diversified = []
+        kind_order = sorted(
+            buckets,
+            key=lambda kind: (-len(buckets[kind]), kind),
+        )
+
+        while any(buckets[kind] for kind in kind_order):
+            for kind in kind_order:
+                if buckets[kind]:
+                    diversified.append(buckets[kind].pop(0))
+
+        return diversified
 
     def make_component_item(item, cat):
         return {
@@ -2090,7 +2603,11 @@ def render_collage():
             "price_text": format_price(item.get("price")),
             "img_url": get_product_image_src(item),
             "category": cat,
+            "source_category": str(item.get("slot", "acc" if cat.startswith("acc_") else cat)),
             "category_label": category_labels.get(cat, cat.upper()),
+            "lower_category": str(item.get("lower_category", "")),
+            "accessory_kind": accessory_kind(item) if cat.startswith("acc_") else "",
+            "brand": str(item.get("brand", item.get("brand_id", ""))),
         }
 
     def data_attr(item):
@@ -2098,15 +2615,34 @@ def render_collage():
 
     sections_html = []
     first_items_for_autoplace = {}
+    category_pools = {}
 
-    for cat in category_order:
-        raw_items = items_by_category.get(cat, [])[:5]
-        component_items = [make_component_item(item, cat) for item in raw_items]
+    diversified_acc = diversify_accessories(
+        items_by_category.get("acc", [])[:25]
+    )
+    section_items = {
+        "outer": items_by_category.get("outer", [])[:25],
+        "top": items_by_category.get("top", [])[:25],
+        "bottom": items_by_category.get("bottom", [])[:25],
+        "shoes": items_by_category.get("shoes", [])[:25],
+        # 교차 분배해 두 ACC 줄이 서로 다른 품목 구성을 갖도록 합니다.
+        "acc_1": diversified_acc[0::2],
+        "acc_2": diversified_acc[1::2],
+    }
+
+    for section in display_sections:
+        cat = section["key"]
+        raw_items = section_items.get(cat, [])
+        component_items = [
+            make_component_item(item, cat)
+            for item in raw_items
+        ]
+        category_pools[cat] = component_items
         if component_items:
             first_items_for_autoplace[cat] = component_items[0]
 
         cards_html = []
-        for item in component_items:
+        for item in component_items[:5]:
             img_src = html.escape(item.get("img_url", ""), quote=True)
             name = html.escape(item.get("product_name", ""), quote=True)
             price = html.escape(item.get("price_text", "-"))
@@ -2122,7 +2658,7 @@ def render_collage():
                 '''
             )
 
-        for _ in range(max(0, 5 - len(component_items))):
+        for _ in range(max(0, 5 - len(component_items[:5]))):
             cards_html.append(
                 '''
                 <article class="item-card empty-slot">
@@ -2146,6 +2682,7 @@ def render_collage():
         )
 
     auto_payload_json = json.dumps(first_items_for_autoplace, ensure_ascii=False).replace("</", "<\\/")
+    category_pool_json = json.dumps(category_pools, ensure_ascii=False).replace("</", "<\\/")
     bg_style = f"background-image:url('{html.escape(bg_src, quote=True)}');" if bg_src else "background:#f4efe4;"
 
     component_html = f'''
@@ -2156,18 +2693,18 @@ def render_collage():
 <style>
   * {{ box-sizing: border-box; }}
   html, body {{ margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
-  .advanced-collage-layout {{ display: flex; flex-direction: row; width: 100%; height: 742px; background-color: #000; padding: 18px 34px 12px; gap: 62px; justify-content: center; align-items: center; overflow: hidden; }}
-  .left-canvas-area {{ flex: 0 0 430px; height: 710px; display: flex; flex-direction: column; align-items: center; justify-content: center; }}
+  .advanced-collage-layout {{ display: flex; flex-direction: row; width: 100%; max-width: 1380px; height: 770px; margin: 0 auto; background-color: #000; padding: 18px 20px 12px; gap: 42px; justify-content: center; align-items: center; overflow: hidden; }}
+  .left-canvas-area {{ flex: 0 0 520px; height: 735px; display: flex; flex-direction: column; align-items: center; justify-content: center; }}
   .canvas-header {{ width: 100%; text-align: center; }}
   .instruction {{ font-size: 12px; color: #777; margin: 0 0 12px; letter-spacing: -0.01em; }}
-  .collage-canvas {{ width: 390px; height: 542px; border: 1px solid #9ca3af; border-radius: 11px; position: relative; overflow: hidden; background-size: cover; background-position: center; box-shadow: none; }}
-  .collage-canvas::after {{ content: ""; position: absolute; inset: 8px; border: 1px solid rgba(255,255,255,0.72); border-radius: 9px; pointer-events: none; z-index: 1; }}
+  .collage-canvas {{ width: 496px; height: 690px; border: 0; border-radius: 11px; position: relative; overflow: hidden; background-size: cover; background-position: center; box-shadow: none; }}
+  .collage-canvas::after {{ display: none; content: none; }}
   .canvas-item {{ position: absolute; cursor: move; z-index: 10; transform-origin: center center; }}
   .canvas-item img {{ width: 150px; user-select: none; pointer-events: none; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.20)); }}
-  .right-list-area {{ flex: 0 0 610px; height: 690px; display: flex; flex-direction: column; text-align: left; overflow-y: auto; padding-right: 12px; }}
+  .right-list-area {{ flex: 1 1 650px; min-width: 0; max-width: 720px; height: 690px; display: flex; flex-direction: column; text-align: left; overflow-y: auto; padding-right: 12px; }}
   .right-list-area::-webkit-scrollbar {{ width: 5px; }} .right-list-area::-webkit-scrollbar-thumb {{ background: #333; border-radius: 999px; }}
   .sidebar-title {{ font-size: 17px; font-weight: 800; color: #fff; margin: 0 0 16px; letter-spacing: 1.5px; text-align: left; }}
-  .cat-section {{ margin-bottom: 16px; }}
+  .cat-section {{ margin-bottom: 14px; }}
   .cat-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }}
   .cat-name {{ font-size: 12px; font-weight: 800; color: #fff; }}
   .shuffle-btn {{ min-width: 48px; height: 22px; padding: 0 10px; color: #bdbdbd; background: #262626; border: 1px solid #353535; border-radius: 5px; font-size: 10px; cursor: pointer; }}
@@ -2198,8 +2735,8 @@ def render_collage():
       <div class="action-button-group">
         <div class="button-group">
           <button class="btn-secondary" id="localResetBtn" type="button">초기화</button>
-          <button class="btn-secondary" id="autoPlaceBtn" type="button">자동배치</button>
-          <button class="btn-secondary" id="clearNoticeBtn" type="button">안내</button>
+          <button class="btn-secondary" id="goMainBtn" type="button">메인으로</button>
+          <button class="btn-secondary" id="goBackBtn" type="button">이전으로</button>
         </div>
         <button class="buy-red-btn" id="purchaseBtn" type="button">선택 후 구매하기</button>
         <div class="notice" id="notice">Streamlit Lite 데모: 캔버스 조작은 이 화면 안에서 작동합니다.</div>
@@ -2210,28 +2747,121 @@ def render_collage():
 <script>
 (function() {{
   const AUTO_ITEMS = {auto_payload_json};
+  const CATEGORY_POOLS = {category_pool_json};
   const canvas = document.getElementById('canvas');
   const notice = document.getElementById('notice');
   const jsError = document.getElementById('jsError');
-  const state = {{ selectedItems: [], draggingId: null, offsetX: 0, offsetY: 0, maxZ: 10 }};
+  const state = {{ selectedItems: [], draggingId: null, offsetX: 0, offsetY: 0, maxZ: 10, poolOffsets: {{}} }};
   function showError(error) {{ if (!jsError) return; jsError.style.display = 'block'; jsError.textContent = 'JS 오류: ' + (error && error.message ? error.message : String(error)); }}
   window.addEventListener('error', function(event) {{ showError(event.error || event.message); }});
   function parseItemFromElement(el) {{ const raw = el.getAttribute('data-item'); if (!raw) return null; return JSON.parse(raw); }}
   function addCanvasItem(item, x, y, scale) {{ const id = Date.now() + '-' + Math.random().toString(16).slice(2); state.maxZ += 1; state.selectedItems.push({{...item, instanceId: id, x: x, y: y, scale: scale || 0.8, zIndex: state.maxZ}}); renderCanvas(); }}
   function renderCanvas() {{ Array.from(canvas.querySelectorAll('.canvas-item')).forEach(function(node) {{ node.remove(); }}); state.selectedItems.forEach(function(item) {{ const node = document.createElement('div'); node.className = 'canvas-item'; node.dataset.id = item.instanceId; node.style.left = item.x + 'px'; node.style.top = item.y + 'px'; node.style.transform = 'scale(' + item.scale + ')'; node.style.zIndex = item.zIndex; const img = document.createElement('img'); img.src = item.img_url; img.alt = item.product_name || ''; img.draggable = false; node.appendChild(img); attachCanvasHandlers(node, item); canvas.appendChild(node); }}); }}
   function attachCanvasHandlers(node, item) {{ node.addEventListener('mousedown', function(event) {{ event.preventDefault(); event.stopPropagation(); const target = state.selectedItems.find(function(it) {{ return it.instanceId === item.instanceId; }}); if (!target) return; state.draggingId = item.instanceId; state.offsetX = event.clientX - target.x; state.offsetY = event.clientY - target.y; state.maxZ += 1; target.zIndex = state.maxZ; node.style.zIndex = target.zIndex; }}); node.addEventListener('wheel', function(event) {{ event.preventDefault(); event.stopPropagation(); const target = state.selectedItems.find(function(it) {{ return it.instanceId === item.instanceId; }}); if (!target) return; const delta = event.deltaY > 0 ? -0.1 : 0.1; target.scale = Math.min(Math.max(target.scale + delta, 0.2), 3); node.style.transform = 'scale(' + target.scale + ')'; }}, {{ passive: false }}); node.addEventListener('contextmenu', function(event) {{ event.preventDefault(); state.selectedItems = state.selectedItems.filter(function(it) {{ return it.instanceId !== item.instanceId; }}); renderCanvas(); }}); }}
-  document.querySelectorAll('.draggable-product').forEach(function(img) {{ img.addEventListener('dragstart', function(event) {{ const item = parseItemFromElement(img); if (!item) return; const raw = JSON.stringify(item); event.dataTransfer.setData('application/json', raw); event.dataTransfer.setData('text/plain', raw); }}); }});
+  function attachCatalogDragHandlers(root) {{
+    (root || document).querySelectorAll('.draggable-product').forEach(function(img) {{
+      if (img.dataset.dragReady === '1') return;
+      img.dataset.dragReady = '1';
+      img.addEventListener('dragstart', function(event) {{
+        const item = parseItemFromElement(img);
+        if (!item) return;
+        const raw = JSON.stringify(item);
+        event.dataTransfer.setData('application/json', raw);
+        event.dataTransfer.setData('text/plain', raw);
+      }});
+    }});
+  }}
+  attachCatalogDragHandlers(document);
   canvas.addEventListener('dragover', function(event) {{ event.preventDefault(); }});
   canvas.addEventListener('drop', function(event) {{ event.preventDefault(); const raw = event.dataTransfer.getData('application/json') || event.dataTransfer.getData('text/plain'); if (!raw) return; try {{ const item = JSON.parse(raw); const rect = canvas.getBoundingClientRect(); addCanvasItem(item, event.clientX - rect.left - 60, event.clientY - rect.top - 60, 0.8); }} catch (error) {{ showError(error); }} }});
   document.addEventListener('mousemove', function(event) {{ if (!state.draggingId) return; const target = state.selectedItems.find(function(it) {{ return it.instanceId === state.draggingId; }}); if (!target) return; target.x = event.clientX - state.offsetX; target.y = event.clientY - state.offsetY; const node = canvas.querySelector('[data-id="' + state.draggingId + '"]'); if (node) {{ node.style.left = target.x + 'px'; node.style.top = target.y + 'px'; }} }});
   document.addEventListener('mouseup', function() {{ state.draggingId = null; }});
-  function autoPlace() {{ state.selectedItems = []; const positions = [{{cat:'outer',x:30,y:105,scale:1.18}},{{cat:'top',x:205,y:88,scale:1.05}},{{cat:'bottom',x:215,y:268,scale:1.05}},{{cat:'shoes',x:62,y:398,scale:0.92}},{{cat:'acc',x:182,y:178,scale:0.72}}]; positions.forEach(function(pos) {{ const item = AUTO_ITEMS[pos.cat]; if (!item) return; state.maxZ += 1; state.selectedItems.push({{...item, instanceId: Date.now() + '-' + Math.random().toString(16).slice(2), x: pos.x, y: pos.y, scale: pos.scale, zIndex: state.maxZ}}); }}); renderCanvas(); }}
+  function autoPlace() {{ state.selectedItems = []; const positions = [{{cat:'outer',x:38,y:134,scale:1.28}},{{cat:'top',x:260,y:112,scale:1.15}},{{cat:'bottom',x:273,y:341,scale:1.15}},{{cat:'shoes',x:79,y:506,scale:1.02}},{{cat:'acc_1',x:218,y:210,scale:0.78}},{{cat:'acc_2',x:350,y:242,scale:0.70}}]; positions.forEach(function(pos) {{ const item = AUTO_ITEMS[pos.cat]; if (!item) return; state.maxZ += 1; state.selectedItems.push({{...item, instanceId: Date.now() + '-' + Math.random().toString(16).slice(2), x: pos.x, y: pos.y, scale: pos.scale, zIndex: state.maxZ}}); }}); renderCanvas(); }}
   function clearCanvas() {{ state.selectedItems = []; renderCanvas(); }}
-  function shuffleCategory(cat) {{ const section = document.querySelector('.cat-section[data-cat="' + cat + '"]'); if (!section) return; const grid = section.querySelector('.item-grid'); const cards = Array.from(grid.children); const productCards = cards.filter(function(card) {{ return !card.classList.contains('empty-slot'); }}); for (let i = productCards.length - 1; i > 0; i -= 1) {{ const j = Math.floor(Math.random() * (i + 1)); const temp = productCards[i]; productCards[i] = productCards[j]; productCards[j] = temp; }} grid.innerHTML = ''; productCards.forEach(function(card) {{ grid.appendChild(card); }}); cards.filter(function(card) {{ return card.classList.contains('empty-slot'); }}).forEach(function(card) {{ grid.appendChild(card); }}); }}
+  function createCatalogCard(item) {{
+    const article = document.createElement('article');
+    article.className = 'item-card';
+
+    const imgBox = document.createElement('div');
+    imgBox.className = 'img-box';
+
+    const img = document.createElement('img');
+    img.className = 'draggable-product';
+    img.src = item.img_url || '';
+    img.alt = item.product_name || '';
+    img.draggable = true;
+    img.setAttribute('data-item', JSON.stringify(item));
+
+    const price = document.createElement('p');
+    price.className = 'price-text';
+    price.textContent = item.price_text || '-';
+
+    imgBox.appendChild(img);
+    article.appendChild(imgBox);
+    article.appendChild(price);
+    return article;
+  }}
+
+  function createEmptyCard() {{
+    const article = document.createElement('article');
+    article.className = 'item-card empty-slot';
+    article.textContent = '해당 상품 없음';
+    return article;
+  }}
+
+  function shuffleCategory(cat) {{
+    const section = document.querySelector('.cat-section[data-cat="' + cat + '"]');
+    if (!section) return;
+
+    const grid = section.querySelector('.item-grid');
+    const pool = CATEGORY_POOLS[cat] || [];
+    if (!pool.length) return;
+
+    const currentOffset = Number(state.poolOffsets[cat] || 0);
+    const nextOffset = pool.length > 5 ? (currentOffset + 5) % pool.length : 0;
+    state.poolOffsets[cat] = nextOffset;
+
+    grid.innerHTML = '';
+    const count = Math.min(5, pool.length);
+
+    for (let index = 0; index < count; index += 1) {{
+      const item = pool[(nextOffset + index) % pool.length];
+      grid.appendChild(createCatalogCard(item));
+    }}
+
+    for (let index = count; index < 5; index += 1) {{
+      grid.appendChild(createEmptyCard());
+    }}
+
+    attachCatalogDragHandlers(grid);
+    notice.textContent = (section.querySelector('.cat-name')?.textContent || cat)
+      + ' 카테고리의 다른 추천 상품 5개를 불러왔습니다.';
+  }}
   function purchaseDemo() {{ if (!state.selectedItems.length) {{ alert('캔버스에 상품을 먼저 드래그해 주세요.'); return; }} const total = state.selectedItems.reduce(function(sum, item) {{ return sum + Number(item.price || 0); }}, 0); const names = state.selectedItems.map(function(item) {{ return '- ' + (item.product_name || item.category_label || '상품'); }}).join('\\n'); alert('선택 상품 ' + state.selectedItems.length + '개\\n총액: ' + total.toLocaleString() + '원\\n\\n' + names); }}
+  function clickParentStreamlitButton(keyPart) {{
+    try {{
+      const selector = 'div[class*="st-key-' + keyPart + '"] button';
+      const parentButton = window.parent.document.querySelector(selector);
+      if (parentButton) {{
+        parentButton.click();
+        return true;
+      }}
+    }} catch (error) {{
+      showError(error);
+    }}
+    return false;
+  }}
   document.getElementById('localResetBtn').onclick = clearCanvas;
-  document.getElementById('autoPlaceBtn').onclick = autoPlace;
-  document.getElementById('clearNoticeBtn').onclick = function() {{ notice.textContent = '상품 이미지를 오른쪽에서 왼쪽 캔버스로 드래그하세요. 캔버스 안에서는 이동/휠 확대/우클릭 삭제가 가능합니다.'; }};
+  document.getElementById('goMainBtn').onclick = function() {{
+    if (!clickParentStreamlitButton('collage_main_bridge')) {{
+      notice.textContent = '메인 화면 이동 버튼을 찾지 못했습니다.';
+    }}
+  }};
+  document.getElementById('goBackBtn').onclick = function() {{
+    if (!clickParentStreamlitButton('collage_back_bridge')) {{
+      notice.textContent = '이전 화면 이동 버튼을 찾지 못했습니다.';
+    }}
+  }};
   document.getElementById('purchaseBtn').onclick = purchaseDemo;
   document.querySelectorAll('[data-shuffle]').forEach(function(btn) {{ btn.addEventListener('click', function() {{ shuffleCategory(btn.getAttribute('data-shuffle')); }}); }});
   autoPlace();
@@ -2242,22 +2872,25 @@ def render_collage():
 '''
 
     st.markdown("<div class='collage-page-marker'></div>", unsafe_allow_html=True)
-    components.html(component_html, height=762, scrolling=False)
+    components.html(component_html, height=790, scrolling=False)
 
-    ctrl_home, ctrl_reset, ctrl_back = st.columns(3, gap="small")
-    with ctrl_home:
-        home_clicked = st.button("메인으로", key="collage_home", use_container_width=True)
-    with ctrl_reset:
-        reset_clicked = st.button("다른 추천 보기", key="shuffle_all", use_container_width=True)
-    with ctrl_back:
-        back_clicked = st.button("이전으로", key="collage_back", use_container_width=True)
+    # components.html 내부 버튼에서 클릭할 숨김 브리지입니다.
+    # 화면에는 표시되지 않고 페이지 전환 기능만 담당합니다.
+    main_bridge_clicked = st.button(
+        "collage-main-bridge",
+        key="collage_main_bridge",
+    )
+    back_bridge_clicked = st.button(
+        "collage-back-bridge",
+        key="collage_back_bridge",
+    )
 
-    if home_clicked:
+    if main_bridge_clicked:
         reset_all()
-    if reset_clicked:
-        run_recommendation()
-    if back_clicked:
+
+    if back_bridge_clicked:
         go("price_setting")
+
 
 
 # ============================================================
